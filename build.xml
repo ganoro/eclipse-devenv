@@ -2,10 +2,22 @@
     <description>
         building the devenv for soho os dev people
     </description>
+    
+    
+    <macrodef name="propertycopy">
+      <attribute name="name"/>
+      <attribute name="from"/>
+      <sequential>
+         <property name="@{name}" value="${@{from}}"/>
+      </sequential>
+    </macrodef>
+    
   <!-- set global properties for this build -->
   <property name="result" location="result"/>
   <property name="workspace" location="workspace"></property>
   <property name="cache" location="cache"></property>
+  <property name="os" value="${env.OPERATING_SYSTEM}"></property>
+  <property name="resource" value="${org.eclipse.php.${os}}">
 
   <property file="build.properties" /> 
 
@@ -16,10 +28,8 @@
   		  		
 	    <!-- Create the time stamp -->
 	    <tstamp/>
-		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.macosx.x86}" dest="${cache}/${org.eclipse.php.macosx.x86}" usetimestamp="true"/>
-		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86}" dest="${cache}/${org.eclipse.php.linux.x86}" usetimestamp="true"/>
-		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86_64}" dest="${cache}/${org.eclipse.php.linux.x86_64}" usetimestamp="true"/>
-		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.win.x86}" dest="${cache}/${org.eclipse.php.win.x86}" usetimestamp="true"/>
+            <get verbose="true" src="${org.eclipse.php.url}${resource}" dest="${cache}/${resource}" usetimestamp="true"/>
+		
   </target>
 
   <target name="dist" depends="init" description="generate the distribution" >
@@ -31,33 +41,12 @@
 			<arg value="${workspace}/host/eclipse-php/eclipse-php"/>    		
 		</exec>
 
-		<!--  mac -->
+		<!--  os -->
 		<mkdir dir="${workspace}/mac"></mkdir>
-		<untar src="${cache}/${org.eclipse.php.macosx.x86}" dest="${workspace}/mac" compression="gzip"/>
+		<untar src="${cache}/${resource}" dest="${workspace}/${os}" compression="gzip"/>
 		<antcall target="installFeatures">
-    		<param name="destination" value="${workspace}/mac/eclipse-php/"/>
+    		<param name="destination" value="${workspace}/${os}/eclipse-php/"/>
 		</antcall>
-		
-		<!--  linux -->
-		<mkdir dir="${workspace}/linux"></mkdir>
-		<untar src="${cache}/${org.eclipse.php.linux.x86}" dest="${workspace}/linux/" compression="gzip"/>
-		<antcall target="installFeatures">
-    		<param name="destination" value="${workspace}/linux/eclipse-php/"/>
-		</antcall>		
-		
-		<!--  linux64 -->
-		<mkdir dir="${workspace}/linux64"></mkdir>
-		<untar src="${cache}/${org.eclipse.php.linux.x86_64}" dest="${workspace}/linux64/" compression="gzip"/>
-		<antcall target="installFeatures">
-    		<param name="destination" value="${workspace}/linux64/eclipse-php/"/>
-		</antcall>		
-		
-		<!--  win -->
-		<mkdir dir="${workspace}/win"></mkdir>
-		<unzip src="${cache}/${org.eclipse.php.win.x86}" dest="${workspace}/win/"/>
-		<antcall target="installFeatures">
-    		<param name="destination" value="${workspace}/win/eclipse-php/"/>
-		</antcall>		
   </target>
 
 	<target name="installFeatures">
