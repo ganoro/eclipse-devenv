@@ -1,0 +1,107 @@
+<project name="devenv production" default="dist" basedir=".">
+    <description>
+        building the devenv for soho os dev people
+    </description>
+  <!-- set global properties for this build -->
+  <property name="result" location="../result"/>
+  <property name="workspace" location="../workspace"></property>
+  <property name="cache" location="../cache"></property>
+
+  <property file="build.properties" /> 
+
+  <target name="init">
+  		<delete dir="${workspace}" failonerror="false" />
+  		<mkdir dir="${workspace}"></mkdir>
+  		<mkdir dir="${cache}"></mkdir>
+  		  		
+	    <!-- Create the time stamp -->
+	    <tstamp/>
+		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.macosx.x86}" dest="${cache}/${org.eclipse.php.macosx.x86}" usetimestamp="true"/>
+		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86}" dest="${cache}/${org.eclipse.php.linux.x86}" usetimestamp="true"/>
+		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86_64}" dest="${cache}/${org.eclipse.php.linux.x86_64}" usetimestamp="true"/>
+		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.win.x86}" dest="${cache}/${org.eclipse.php.win.x86}" usetimestamp="true"/>
+  </target>
+
+  <target name="dist" depends="init" description="generate the distribution" >
+		<!--  This is the host target eclipse platform, change according to target -->
+		<mkdir dir="${workspace}/host"></mkdir>
+		<untar src="${cache}/${org.eclipse.php.linux.x86_64}" dest="${workspace}/host/" compression="gzip"/>
+		<exec executable="chmod">
+    		<arg value="777"/>
+			<arg value="${workspace}/host/eclipse-php/eclipse-php"/>    		
+		</exec>
+
+		<!--  mac -->
+		<mkdir dir="${workspace}/mac"></mkdir>
+		<untar src="${cache}/${org.eclipse.php.macosx.x86}" dest="${workspace}/mac" compression="gzip"/>
+		<antcall target="installFeatures">
+    		<param name="destination" value="${workspace}/mac/eclipse-php/"/>
+		</antcall>
+		
+		<!--  linux -->
+		<mkdir dir="${workspace}/linux"></mkdir>
+		<untar src="${cache}/${org.eclipse.php.linux.x86}" dest="${workspace}/linux/" compression="gzip"/>
+		<antcall target="installFeatures">
+    		<param name="destination" value="${workspace}/linux/eclipse-php/"/>
+		</antcall>		
+		
+		<!--  linux64 -->
+		<mkdir dir="${workspace}/linux64"></mkdir>
+		<untar src="${cache}/${org.eclipse.php.linux.x86_64}" dest="${workspace}/linux64/" compression="gzip"/>
+		<antcall target="installFeatures">
+    		<param name="destination" value="${workspace}/linux64/eclipse-php/"/>
+		</antcall>		
+		
+		<!--  win -->
+		<mkdir dir="${workspace}/win"></mkdir>
+		<unzip src="${cache}/${org.eclipse.php.win.x86}" dest="${workspace}/win/"/>
+		<antcall target="installFeatures">
+    		<param name="destination" value="${workspace}/win/eclipse-php/"/>
+		</antcall>		
+  </target>
+
+	<target name="installFeatures">
+		<antcall target="installIUs">
+    		<param name="repo" value="${org.eclipse.url}"/>
+    		<param name="installius" value="${org.eclipse.installIUs}"/>
+  		</antcall>
+
+		<antcall target="installIUs">
+    		<param name="repo" value="${org.eclipse.svn.url}"/>
+    		<param name="installius" value="${org.eclipse.svn.installIUs}"/>
+  		</antcall>
+
+		<antcall target="installIUs">
+    		<param name="repo" value="${org.eclipse.svn.connector.url}"/>
+    		<param name="installius" value="${org.eclipse.svn.connector.installIUs}"/>
+  		</antcall>
+
+		<antcall target="installIUs">
+    		<param name="repo" value="${org.eclipse.php.ext.url}"/>
+    		<param name="installius" value="${org.eclipse.php.ext.installIUs}"/>
+  		</antcall>
+
+		<antcall target="installIUs">
+    		<param name="repo" value="${org.eclipse.php.ect.url}"/>
+    		<param name="installius" value="${org.eclipse.php.ect.installIUs}"/>
+  		</antcall>
+
+		<antcall target="installIUs">
+    		<param name="repo" value="${org.eclipse.php.pti.url}"/>
+    		<param name="installius" value="${org.eclipse.php.pti.installIUs}"/>
+  		</antcall>
+
+	</target>
+
+	<target name="installIUs">
+		<echo message="Installing new feature to ${destination}" />
+		<echo message="  ${workspace}/host/eclipse-php/eclipse-php " />
+		<echo message="  -repository ${repo}" />
+		<echo message="  -installIUs ${installius}" />
+		<echo message="  -data ${workspace}/host/workspace" />
+		
+		<exec command='${workspace}/host/eclipse-php/eclipse-php -application org.eclipse.equinox.p2.director -noSplash -data ${workspace}/host/workspace -repository ${repo} -installIUs "${installius}" -destination ${destination}' />
+	</target>
+  
+</project>
+
