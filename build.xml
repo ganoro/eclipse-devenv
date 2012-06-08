@@ -47,10 +47,10 @@
 		</exec>
 
 		<!--  os -->
-		<mkdir dir="${workspace}/mac"></mkdir>
+		<mkdir dir="${workspace}/${os}"></mkdir>
 		<untar src="${cache}/${resource}" dest="${workspace}/${os}" compression="gzip"/>
 		<antcall target="installFeatures">
-    		<param name="destination" value="${workspace}/${os}/eclipse-php/"/>
+    			<param name="destination" value="${workspace}/${os}/eclipse-php/"/>
 		</antcall>
   </target>
 
