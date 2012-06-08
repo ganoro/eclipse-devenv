@@ -13,6 +13,7 @@
     </macrodef>
     
   <!-- set global properties for this build -->
+  <property file="build.properties" /> 
   <property environment="env"/>
   <property name="result" location="result"/>
   <property name="workspace" location="workspace" />
@@ -20,7 +21,7 @@
   <property name="os" value="${env.OPERATING_SYSTEM}" />
   <propertycopy name="resource" from="org.eclipse.php.${os}" />
 
-  <property file="build.properties" /> 
+  
 
   <target name="init">
   		<echo message="os: ${os}" />
