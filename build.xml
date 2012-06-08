@@ -14,10 +14,10 @@
     
   <!-- set global properties for this build -->
   <property name="result" location="result"/>
-  <property name="workspace" location="workspace"></property>
-  <property name="cache" location="cache"></property>
-  <property name="os" value="${env.OPERATING_SYSTEM}"></property>
-  <property name="resource" value="${org.eclipse.php.${os}}">
+  <property name="workspace" location="workspace" />
+  <property name="cache" location="cache" />
+  <property name="os" value="${env.OPERATING_SYSTEM}" />
+  <property name="resource" value="${org.eclipse.php.${os}}" />
 
   <property file="build.properties" /> 
 
