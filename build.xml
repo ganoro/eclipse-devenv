@@ -17,7 +17,7 @@
   <property name="workspace" location="workspace" />
   <property name="cache" location="cache" />
   <property name="os" value="${env.OPERATING_SYSTEM}" />
-  <property name="resource" value="${org.eclipse.php.${os}}" />
+  <propertycopy name="resource" from="org.eclipse.php.${os}" />
 
   <property file="build.properties" /> 
 
