@@ -30,7 +30,8 @@
   		<delete dir="${workspace}" failonerror="false" />
   		<mkdir dir="${workspace}"></mkdir>
   		<mkdir dir="${cache}"></mkdir>
-  		  		
+  		<mkdir dir="${result}"></mkdir>
+  		
 	    <!-- Create the time stamp -->
 	    <tstamp/>
 	    <get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86_64}" dest="${cache}/${org.eclipse.php.linux.x86_64}" usetimestamp="true"/>
@@ -53,6 +54,10 @@
 		<antcall target="installFeatures">
     			<param name="destination" value="${workspace}/${os}/eclipse-php/"/>
 		</antcall>
+		
+		<move todir="${result}/${os}">
+    			<fileset dir="${workspace}/${os}"/>
+  		</move>
   </target>
 
 	<target name="installFeatures">
