@@ -22,6 +22,9 @@
   <property file="build.properties" /> 
 
   <target name="init">
+  		<echo message="os: ${os}" />
+  		<echo message="env: ${env.OPERATING_SYSTEM}" />
+  		<echo message="resource: ${resource}" />
   		<delete dir="${workspace}" failonerror="false" />
   		<mkdir dir="${workspace}"></mkdir>
   		<mkdir dir="${cache}"></mkdir>
