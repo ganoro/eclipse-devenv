@@ -33,6 +33,7 @@
   		  		
 	    <!-- Create the time stamp -->
 	    <tstamp/>
+	    <get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86_64}" dest="${cache}/${org.eclipse.php.linux.x86_64}" usetimestamp="true"/>
             <get verbose="true" src="${org.eclipse.php.url}${resource}" dest="${cache}/${resource}" usetimestamp="true"/>
 		
   </target>
