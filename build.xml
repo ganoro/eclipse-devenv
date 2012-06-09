@@ -95,7 +95,13 @@
     		<param name="repo" value="${com.unfuddle.mylyn.url}"/>
     		<param name="installius" value="${com.unfuddle.mylyn.installIUs}"/>
   		</antcall>
-
+  		
+  
+		<antcall target="installIUs">
+    		<param name="repo" value="${ru.zencoding.eclipse.url}"/>
+    		<param name="installius" value="${ru.zencoding.eclipse.installIUs}"/>
+  		</antcall>
+  		
 	</target>
 
 	<target name="installIUs">
