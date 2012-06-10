@@ -12,6 +12,9 @@
       </sequential>
     </macrodef>
     
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+    
+    
   <!-- set global properties for this build -->
   <property file="build.properties" /> 
   <property environment="env"/>
@@ -20,8 +23,6 @@
   <property name="cache" location="cache" />
   <property name="os" value="${env.OPERATING_SYSTEM}" />
   <propertycopy name="resource" from="org.eclipse.php.${os}" />
-
-  
 
   <target name="init">
   		<echo message="os: ${os}" />
@@ -35,9 +36,19 @@
 	    <!-- Create the time stamp -->
 	    <tstamp/>
 	    <get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86_64}" dest="${cache}/${org.eclipse.php.linux.x86_64}" usetimestamp="true"/>
-            <get verbose="true" src="${org.eclipse.php.url}${resource}" dest="${cache}/${resource}" usetimestamp="true"/>
+        <get verbose="true" src="${org.eclipse.php.url}${resource}" dest="${cache}/${resource}" usetimestamp="true"/>
 		
   </target>
+
+  <target name="prepareProduct">
+  		<echo message="prepare product" />
+  		<mkdir dir="${workspace}/product"></mkdir>
+  		<files includes="${workspace}/host/eclipse-php/plugins/org.zend.php_3.*.jar" id="product.file" />
+		<property name="product.jarfile" value="${toString:product.file}" />
+  		<echo message="Jar File:  ${product.jarfile}" />
+		<unzip src="${product.jarfile}" dest="${workspace}/product" />
+  </target>
+
 
   <target name="dist" depends="init" description="generate the distribution" >
 		<!--  This is the host target eclipse platform, change according to target -->
@@ -47,7 +58,8 @@
     		<arg value="777"/>
 			<arg value="${workspace}/host/eclipse-php/eclipse-php"/>    		
 		</exec>
-
+		<antcall target="prepareProduct" />
+		
 		<!--  os -->
 		<mkdir dir="${workspace}/${os}"></mkdir>
 		<untar src="${cache}/${resource}" dest="${workspace}/${os}" compression="gzip"/>
