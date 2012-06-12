@@ -2,25 +2,58 @@
     <description>
         building the devenv for soho os dev people
     </description>
+    
+    
+    <macrodef name="propertycopy">
+      <attribute name="name"/>
+      <attribute name="from"/>
+      <sequential>
+         <property name="@{name}" value="${@{from}}"/>
+      </sequential>
+    </macrodef>
+    
+  <taskdef resource="net/sf/antcontrib/antcontrib.properties"/>
+    
+    
   <!-- set global properties for this build -->
-  <property name="result" location="result"/>
-  <property name="workspace" location="workspace"></property>
-  <property name="cache" location="cache"></property>
-
   <property file="build.properties" /> 
+  <property environment="env"/>
+  <property name="result" location="result"/>
+  <property name="version" value="v1"/>
+  <property name="workspace" location="workspace" />
+  <property name="cache" location="cache" />
+  <property name="os" value="${env.OPERATING_SYSTEM}" />
+  <propertycopy name="resource" from="org.eclipse.php.${os}" />
+  
 
   <target name="init">
+  		<echo message="os: ${os}" />
+  		<echo message="env: ${env.OPERATING_SYSTEM}" />
+  		<echo message="resource: ${resource}" />
   		<delete dir="${workspace}" failonerror="false" />
   		<mkdir dir="${workspace}"></mkdir>
   		<mkdir dir="${cache}"></mkdir>
-  		  		
+  		<mkdir dir="${result}"></mkdir>
+  		
 	    <!-- Create the time stamp -->
 	    <tstamp/>
-		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.macosx.x86}" dest="${cache}/${org.eclipse.php.macosx.x86}" usetimestamp="true"/>
-		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86}" dest="${cache}/${org.eclipse.php.linux.x86}" usetimestamp="true"/>
-		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86_64}" dest="${cache}/${org.eclipse.php.linux.x86_64}" usetimestamp="true"/>
-		<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.win.x86}" dest="${cache}/${org.eclipse.php.win.x86}" usetimestamp="true"/>
+	    <get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86_64}" dest="${cache}/${org.eclipse.php.linux.x86_64}" usetimestamp="true"/>
+        <get verbose="true" src="${org.eclipse.php.url}${resource}" dest="${cache}/${resource}" usetimestamp="true"/>
+		
   </target>
+
+  <target name="prepareProduct">
+  		<echo message="prepare product" />
+  		<mkdir dir="${workspace}/product"></mkdir>
+  		<files includes="${workspace}/${os}/eclipse-php/plugins/org.zend.php_3.*.jar" id="product.file" />
+		<property name="product.jarfile" value="${toString:product.file}" />
+  		<echo message="Jar File:  ${product.jarfile}" />
+		<unzip src="${product.jarfile}" dest="${workspace}/product" />
+		<copy file="plugin_customization.ini" tofile="${workspace}/product/plugin_customization.ini" overwrite="true"/>
+		<copy file="splash.bmp" tofile="${workspace}/product/splash.bmp" overwrite="true"/>
+		<jar destfile="${product.jarfile}" basedir="${workspace}/product" update="true"/>
+  </target>
+
 
   <target name="dist" depends="init" description="generate the distribution" >
 		<!--  This is the host target eclipse platform, change according to target -->
@@ -30,34 +63,17 @@
     		<arg value="777"/>
 			<arg value="${workspace}/host/eclipse-php/eclipse-php"/>    		
 		</exec>
-
-		<!--  mac -->
-		<mkdir dir="${workspace}/mac"></mkdir>
-		<untar src="${cache}/${org.eclipse.php.macosx.x86}" dest="${workspace}/mac" compression="gzip"/>
-		<antcall target="installFeatures">
-    		<param name="destination" value="${workspace}/mac/eclipse-php/"/>
+		
+		<!--  os -->
+		<mkdir dir="${workspace}/${os}"></mkdir>
+		<untar src="${cache}/${resource}" dest="${workspace}/${os}" compression="gzip"/>
+		<antcall target="prepareProduct" />
+ 
+  		<antcall target="installFeatures">
+    			<param name="destination" value="${workspace}/${os}/eclipse-php/"/>
 		</antcall>
-		
-		<!--  linux -->
-		<mkdir dir="${workspace}/linux"></mkdir>
-		<untar src="${cache}/${org.eclipse.php.linux.x86}" dest="${workspace}/linux/" compression="gzip"/>
-		<antcall target="installFeatures">
-    		<param name="destination" value="${workspace}/linux/eclipse-php/"/>
-		</antcall>		
-		
-		<!--  linux64 -->
-		<mkdir dir="${workspace}/linux64"></mkdir>
-		<untar src="${cache}/${org.eclipse.php.linux.x86_64}" dest="${workspace}/linux64/" compression="gzip"/>
-		<antcall target="installFeatures">
-    		<param name="destination" value="${workspace}/linux64/eclipse-php/"/>
-		</antcall>		
-		
-		<!--  win -->
-		<mkdir dir="${workspace}/win"></mkdir>
-		<unzip src="${cache}/${org.eclipse.php.win.x86}" dest="${workspace}/win/"/>
-		<antcall target="installFeatures">
-    		<param name="destination" value="${workspace}/win/eclipse-php/"/>
-		</antcall>		
+
+  		<zip destfile="${result}/eclipse-php-${os}-${version}.zip" basedir="${workspace}/${os}" />
   </target>
 
 	<target name="installFeatures">
@@ -95,7 +111,13 @@
     		<param name="repo" value="${com.unfuddle.mylyn.url}"/>
     		<param name="installius" value="${com.unfuddle.mylyn.installIUs}"/>
   		</antcall>
-
+  		
+  
+		<antcall target="installIUs">
+    		<param name="repo" value="${ru.zencoding.eclipse.url}"/>
+    		<param name="installius" value="${ru.zencoding.eclipse.installIUs}"/>
+  		</antcall>
+  		
 	</target>
 
 	<target name="installIUs">
