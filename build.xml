@@ -75,7 +75,7 @@
 
  		<files includes="${workspace}/${os}/eclipse-php/plugins/org.phpsrc.eclipse.pti.library.pear*" id="pear.dir" > <type type="dir"/> </files>
                 <property name="pear_plugin.dir" value="${toString:pear.dir}" />
-		<copy todir="${pear_plugin.dir}/php/library/PEAR/PHP/CodeSniffer/Standards" force="true" overwrite="true">
+		<copy todir="${pear_plugin.dir}/php/library/PEAR/PHP/CodeSniffer/Standards" overwrite="true">
     			<fileset dir="PEAR"/>
   		</copy>
 
