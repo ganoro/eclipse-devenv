@@ -25,6 +25,14 @@
   <property name="os" value="${env.OPERATING_SYSTEM}" />
   <propertycopy name="resource" from="org.eclipse.php.${os}" />
   
+  <target name="package.check">
+	<condition property="package.win">
+   		<or>
+	               	<equals arg1="win.x86" arg2="${os}"/>
+	               	<equals arg1="win.x86_64" arg2="${os}"/>
+	        </or>
+ 	</condition>
+  </target>
 
   <target name="init">
   		<echo message="os: ${os}" />
@@ -35,10 +43,10 @@
   		<mkdir dir="${cache}"></mkdir>
   		<mkdir dir="${result}"></mkdir>
   		
-	    <!-- Create the time stamp -->
-	    <tstamp/>
-	    <get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86_64}" dest="${cache}/${org.eclipse.php.linux.x86_64}" usetimestamp="true"/>
-        <get verbose="true" src="${org.eclipse.php.url}${resource}" dest="${cache}/${resource}" usetimestamp="true"/>
+	    	<!-- Create the time stamp -->
+	    	<tstamp/>
+	    	<get verbose="true" src="${org.eclipse.php.url}${org.eclipse.php.linux.x86_64}" dest="${cache}/${org.eclipse.php.linux.x86_64}" usetimestamp="true"/>
+ 		<get verbose="true" src="${org.eclipse.php.url}${resource}" dest="${cache}/${resource}" usetimestamp="true"/>
 		
   </target>
 
@@ -64,12 +72,13 @@
 			<arg value="${workspace}/host/eclipse-php/eclipse-php"/>    		
 		</exec>
 		
-		<!--  os -->
+		<!--  unzip to the os package  -->
 		<mkdir dir="${workspace}/${os}"></mkdir>
-		<untar src="${cache}/${resource}" dest="${workspace}/${os}" compression="gzip"/>
+		<antcall target="unpack.nonwin">
+		<antcall target="unpack.win">
+		
 		<antcall target="prepareProduct" />
- 
-  		<antcall target="installFeatures">
+   		<antcall target="installFeatures">
     			<param name="destination" value="${workspace}/${os}/eclipse-php/"/>
 		</antcall>
 
@@ -82,6 +91,15 @@
 
   		<zip destfile="${result}/eclipse-php-${os}-${version}.zip" basedir="${workspace}/${os}" />
   </target>
+  
+  <target name="unpack.nonwin" depends="package.check" unless="package.win">
+  	<untar src="${cache}/${resource}" dest="${workspace}/${os}" compression="gzip"/>
+  </target>
+  
+  <target name="unpack.win" depends="package.check" if="package.win">
+  	<unzip src="${cache}/${resource}" dest="${workspace}/${os}"/>
+  </target>
+  
 
 	<target name="installFeatures">
 		<antcall target="installIUs">
