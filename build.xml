@@ -74,8 +74,8 @@
 		
 		<!--  unzip to the os package  -->
 		<mkdir dir="${workspace}/${os}"></mkdir>
-		<antcall target="unpack.nonwin">
-		<antcall target="unpack.win">
+		<antcall target="unpack.nonwin" />
+		<antcall target="unpack.win" />
 		
 		<antcall target="prepareProduct" />
    		<antcall target="installFeatures">
