@@ -108,8 +108,8 @@
   		</antcall>
   		
 		<antcall target="installIUs">
-    		<param name="repo" value="${org.eclipse.php.url}"/>
-    		<param name="installius" value="${org.eclipse.php.installIUs}"/>
+    		<param name="repo" value="${org.eclipse.pdt.url}"/>
+    		<param name="installius" value="${org.eclipse.pdt.installIUs}"/>
   		</antcall>  		
 
 		<antcall target="installIUs">
