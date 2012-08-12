@@ -53,7 +53,7 @@
   <target name="prepareProduct">
   		<echo message="prepare product" />
   		<mkdir dir="${workspace}/product"></mkdir>
-  		<files includes="${workspace}/${os}/eclipse-php/plugins/org.zend.php_3.*.jar" id="product.file" />
+  		<files includes="${workspace}/${os}/eclipse/plugins/org.zend.php_3.*.jar" id="product.file" />
 		<property name="product.jarfile" value="${toString:product.file}" />
   		<echo message="Jar File:  ${product.jarfile}" />
 		<unzip src="${product.jarfile}" dest="${workspace}/product" />
@@ -69,7 +69,7 @@
 		<untar src="${cache}/${org.eclipse.php.linux.x86_64}" dest="${workspace}/host/" compression="gzip"/>
 		<exec executable="chmod">
     		<arg value="777"/>
-			<arg value="${workspace}/host/eclipse-php/eclipse-php"/>    		
+			<arg value="${workspace}/host/eclipse/eclipse"/>    		
 		</exec>
 		
 		<!--  unzip to the os package  -->
@@ -79,17 +79,17 @@
 		
 		<antcall target="prepareProduct" />
    		<antcall target="installFeatures">
-    			<param name="destination" value="${workspace}/${os}/eclipse-php/"/>
+    			<param name="destination" value="${workspace}/${os}/eclipse/"/>
 		</antcall>
 
- 		<files includes="${workspace}/${os}/eclipse-php/plugins/org.phpsrc.eclipse.pti.library.pear*" id="pear.dir" > <type type="dir"/> </files>
+ 		<files includes="${workspace}/${os}/eclipse/plugins/org.phpsrc.eclipse.pti.library.pear*" id="pear.dir" > <type type="dir"/> </files>
                 <property name="pear_plugin.dir" value="${toString:pear.dir}" />
 		<copy todir="${pear_plugin.dir}/php/library/PEAR/PHP/CodeSniffer/Standards/PEAR" overwrite="true">
     			<fileset dir="PEAR"/>
   		</copy>
 
 
-  		<zip destfile="${result}/eclipse-php-${os}-${version}.zip" basedir="${workspace}/${os}" />
+  		<zip destfile="${result}/eclipse-${os}-${version}.zip" basedir="${workspace}/${os}" />
   </target>
   
   <target name="unpack.nonwin" depends="package.check" unless="package.win">
@@ -147,12 +147,12 @@
 
 	<target name="installIUs">
 		<echo message="Installing new feature to ${destination}" />
-		<echo message="  ${workspace}/host/eclipse-php/eclipse-php " />
+		<echo message="  ${workspace}/host/eclipse/eclipse " />
 		<echo message="  -repository ${repo}" />
 		<echo message="  -installIUs ${installius}" />
 		<echo message="  -data ${workspace}/host/workspace" />
 		
-		<exec command='${workspace}/host/eclipse-php/eclipse-php -application org.eclipse.equinox.p2.director -noSplash -data ${workspace}/host/workspace -repository ${repo} -installIUs "${installius}" -destination ${destination}' />
+		<exec command='${workspace}/host/eclipse/eclipse -application org.eclipse.equinox.p2.director -noSplash -data ${workspace}/host/workspace -repository ${repo} -installIUs "${installius}" -destination ${destination}' />
 	</target>
   
 </project>
