@@ -77,7 +77,7 @@
 		<antcall target="unpack.nonwin" />
 		<antcall target="unpack.win" />
 		
-		<antcall target="prepareProduct" />
+		<!--  <antcall target="prepareProduct" /> -->
    		<antcall target="installFeatures">
     			<param name="destination" value="${workspace}/${os}/eclipse/"/>
 		</antcall>
