@@ -21,7 +21,7 @@
   <property name="result" location="result"/>
   <property name="version" value="v1"/>
   <property name="workspace" location="workspace" />
-  <property name="cache" location="cache" />
+  <property name="cache" location="/tmp/cache" />
   <property name="os" value="${env.OPERATING_SYSTEM}" />
   <propertycopy name="resource" from="org.eclipse.php.${os}" />
   
